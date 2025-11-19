@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>ScanTree — Aide au choix des techniques de scan</title>
+    <meta name="description" content="Outil didactique pour choisir LGS, PHO, SLAM, SLS, GS selon des critères pondérés, avec visualisation radar." />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./styles.css" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js" defer></script>
+    <script src="./app.js" type="module" defer></script>
+  </head>
+  <body>
+    <header class="app-header">
+      <div class="brand">
+        <span class="logo">SCAN<span class="glitch">TREE</span></span>
+        <span class="tag">outil multicritère • patrimoine</span>
+      </div>
+      <nav class="actions">
+        <button id="resetBtn" class="btn ghost" title="Réinitialiser les pondérations">↺ Réinitialiser</button>
+        <details class="presets">
+          <summary>Profils</summary>
+          <div class="presets-list">
+            <button class="btn tiny" data-preset="plans">Plans & relevés</button>
+            <button class="btn tiny" data-preset="vr">Médiation VR</button>
+            <button class="btn tiny" data-preset="details">Détails fins</button>
+            <button class="btn tiny" data-preset="site">Site occupé</button>
+          </div>
+        </details>
+        <a class="btn ghost" href="https://opensource.org/license/mit" target="_blank" rel="noreferrer">MIT</a>
+      </nav>
+    </header>
+
+    <main class="layout">
+      <section class="panel panel-left">
+        <h2>Critères et pondérations</h2>
+        <p class="hint">Réglez l’importance de chaque critère (1–5). Décochez pour ignorer un critère.</p>
+        <div id="criteriaList" class="criteria-list"></div>
+      </section>
+      <section class="panel panel-right">
+        <h2>Résultats</h2>
+        <div class="chart-wrap">
+          <canvas id="radarChart" aria-label="Radar des techniques" role="img"></canvas>
+        </div>
+        <div class="ranking">
+          <h3>Classement des techniques</h3>
+          <ol id="rankingList"></ol>
+        </div>
+        <div class="notes">
+          <details>
+            <summary>À savoir</summary>
+            <ul>
+              <li>Les valeurs “1–2” sont interprétées comme 1.5 (compromis).</li>
+              <li>“3*” et “3**” sont traités comme 3 (voir contexte d’échelle et logistique GS).</li>
+              <li>Le radar affiche la proximité globale à chaque technique.</li>
+            </ul>
+          </details>
+        </div>
+      </section>
+    </main>
+
+    <footer class="app-footer">
+      <span>© 2025 ScanTree — CC by vous. Une touche <span class="punk">punk</span> open-source.</span>
+      <a href="https://github.com/" target="_blank" rel="noreferrer">Contribuer</a>
+    </footer>
+  </body>
+  </html>
+
+

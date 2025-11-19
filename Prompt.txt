@@ -1,0 +1,203 @@
+1. Rappel / positionnement des 5 “techniques”
+
+Pour clarifier le vocabulaire dans ton outil :
+
+LGS : lasergrammétrie statique sur trépied.
+
+PHO : photogrammétrie “classique” (multi-images → maillage / nuage dense).
+
+SLAM : scanner mobile / à main (LiDAR ou autre) avec trajectoire estimée.
+
+SLS : scanner à lumière structurée (projecteur + caméra, souvent sur trépied ou bras) →
+
+Très haute précision et résolution,
+
+Portée limitée (objet, décor, fragment),
+
+Demande lumière contrôlée et accès proche.
+
+GS : Gaussian splatting
+
+Représentation issue le plus souvent d’un jeu d’images calibrées (comme PHO) ou d’un système mobile,
+
+Très adapté à la visualisation temps réel, VR, navigation fluide,
+
+Moins directement exploitable pour les plans CAD (même si on peut en extraire de la géométrie).
+
+Dans l’arbre, tu peux donc traiter GS comme un choix d’output quand tu pars sur de la capture image (PHO / vidéos / SLAM visuel).
+
+2. Matrice multicritère mise à jour (5 techniques)
+
+Notation : 3 = très adapté, 2 = moyen, 1 = peu adapté.
+
+Critère	LGS	PHO	SLAM	SLS	GS
+Bâtiment entier / grand volume	3	2	3	1	3*
+Détails fins / sculptures	3	3	2	3	2
+Précision < 1–2 mm	3	2	1–2	3	2
+Relevé rapide en site occupé	2	2	3	1	2
+Espaces étroits / circulations	2	2	3	1–2	3*
+Mouvements (public, voitures)	3	1	2	1	1–2
+Matériaux brillants / vitrés	3	1	2	2	1–2
+Besoin textures / orthophotos	1	3	2	2	3
+Faible lumière / nuit	3	1	2	1–2	1–2
+Visualisation temps réel immersive	2	2	2	1	3
+Temps de traitement raisonnable	2	1	2	2	1–2
+Matériel léger / mobilité	1	3	3	1–2	3**
+
+* GS “hérite” de l’échelle couverte par les données d’entrée (images/SLAM).
+** Légèreté = tu peux capturer avec un simple appareil photo ou smartphone, le lourd est côté GPU.
+
+À partir de là, tu peux :
+
+pondérer tes critères (ex. “précision” = poids 5, “temps de traitement” = poids 3, etc.),
+
+multiplier chaque note par le poids,
+
+sommer par colonne pour obtenir un score global par technique.
+
+3. Mise à jour de l’arbre de décision (avec SLS + GS)
+Étape 1 – Échelle & précision
+
+Quelle échelle principale ?
+
+Bâtiment / ensemble / volume complet
+→ LGS / SLAM / PHO / GS (mais SLS non, sauf détails ponctuels).
+
+Détail / décor / objet (portail, chapiteau, fragments)
+→ PHO ou SLS ou combinaison.
+
+Précision requise ?
+
+Sub-millimétrique / 1–2 mm sur un objet/détail
+→ SLS très pertinent.
+→ PHO HR possible si conditions très maîtrisées (trépied, macro, bonne calibration).
+
+5–10 mm sur un bâtiment
+→ LGS / SLAM / PHO.
+
+Le détail très fin doit-il être replacé dans un modèle global ?
+
+Oui → workflow type :
+
+modèle global en LGS ou SLAM ou PHO,
+
+scans SLS/PHO HR sur zones d’intérêt,
+
+recalage local sur le modèle global.
+
+Non → SLS seul ou PHO seul suffisent.
+
+Étape 2 – Conditions de lumière & environnement (pour SLS / PHO / GS)
+
+Peux-tu contrôler la lumière ? (studio, sac d’ombre, éclairage artificiel)
+
+Oui
+
+PHO et SLS optimisés.
+
+Tu peux envisager une approche GS à partir de séries d’images bien contrôlées (pour un jumeau visuel hyper fluide).
+
+Non (lumière très changeante, public, extérieur)
+
+LGS et SLAM plus robustes pour la géométrie.
+
+PHO/GS restent possibles mais plus sensibles aux artefacts.
+
+Site très fréquenté / circulations impossibles à bloquer ?
+
+Oui
+
+Pour le gros-œuvre : LGS (si trépieds tolérés) ou SLAM.
+
+Pour petits détails, SLS uniquement sur zones localement sécurisées.
+
+Non
+
+Tu peux multiplier les prises PHO ou SLS plus calmement.
+
+Étape 3 – Matériaux & surfaces
+
+Surface plutôt :
+
+Mat / texturée (pierre, brique, bois, enduits)
+→ PHO, SLS, LGS, SLAM, GS : tous contents.
+
+Brillante / vernissée / vitrée / métallique
+→
+
+LGS souvent le plus robuste pour la géométrie.
+
+SLS peut fonctionner, mais nécessite souvent poudrage / préparation (délicat sur patrimoine).
+
+PHO et GS sensibles aux reflets → utilisation plus limitée (médiation, pas métrique).
+
+Étape 4 – Usage final : plans, pathologies, médiation, VR ?
+
+Usage principal = plans, coupes, orthophotos pathologiques, dossiers de restauration ?
+
+Modèle métrique robuste nécessaire :
+
+LGS ou SLAM (géométrie) + PHO (textures, orthos).
+
+SLS en complément local sur certains détails.
+
+Usage principal = visite virtuelle, VR, rendu temps réel, exposition ?
+
+Tu peux décider de sortir un modèle GS à côté du modèle “classique” :
+
+Données d’entrée :
+
+soit PHO multi-vues (extérieur, intérieur),
+
+soit captures vidéo associées à un tracking,
+
+soit SLAM visuel.
+
+Choix :
+
+si tu as déjà un pipeline PHO → GS comme branche “médiation temps réel”.
+
+si tu as déjà un nuage LGS → soit tu texturises classique, soit tu complètes par des prises de vues pour un GS.
+
+Tu peux ajouter dans l’arbre un nœud du type :
+
+“Faut-il un jumeau visuel temps réel (VR / web 3D fluide) ?”
+– Oui → envisager pipeline GS à partir des images captées (PHO / vidéos).
+– Non → rester sur nuages/maillages “classiques”.
+
+Étape 5 – Logistique & équipe
+
+As-tu le matériel / compétences pour :
+
+SLS → calibration, mise en scène contrôlée, recollage de nombreux scans à petite échelle.
+
+GS → GPU costaud, pipeline NeRF/GS, export vers moteur (Unreal, Unity, WebGL…).
+
+Si la réponse est non pour SLS ou GS, ton arbre peut prévoir un “fallback” :
+
+SLS indisponible → PHO HR + mesures complémentaires.
+
+GS indisponible → maillage texturé classique optimisé + moteur temps réel classique.
+
+4. Comment intégrer ça dans ton tableau Excel / outil
+
+Je te propose une structure de base :
+
+Onglet “Critères” :
+
+Col. A : nom du critère
+
+Col. B : poids (1–5)
+
+Col. C à G : scores bruts LGS / PHO / SLAM / SLS / GS (1–3)
+
+Onglet “Scores” :
+
+Pour chaque technique, une colonne avec la formule :
+=SOMMEPROD(Critères!B:B ; Critères!Cx:Cn)
+
+Tu peux ensuite jouer avec :
+
+des profils (ex. “relevé pour plans”, “relevé pour médiation VR”) où les poids changent,
+
+un graphique radar qui compare vite LGS / PHO / SLAM / SLS / GS sur les critères.
