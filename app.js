@@ -1,6 +1,15 @@
 // Techniques (axes du radar)
 const TECHNIQUES = ["LGS", "PHO", "SLAM", "SLS", "GS"];
 
+// Libellés complets à afficher (remplacement des acronymes)
+const TECHNIQUE_LABELS = {
+  LGS: "Lasergrammétrie statique sur trépied",
+  PHO: "Photogrammétrie (multi-images)",
+  SLAM: "Scanner mobile (SLAM)",
+  SLS: "Scanner à lumière structurée",
+  GS: "Gaussian splatting"
+};
+
 // Helper pour “1–2”, “3*”, etc.
 function normalizeScore(raw) {
   if (typeof raw === "number") return raw;
@@ -110,6 +119,71 @@ const resetBtn = document.getElementById("resetBtn");
 const rankingList = document.getElementById("rankingList");
 const presetButtons = Array.from(document.querySelectorAll('[data-preset]'));
 
+// Popover d'aide (créé à la demande)
+let helpPopoverEl = null;
+function ensureHelpPopover() {
+  if (helpPopoverEl) return helpPopoverEl;
+  const el = document.createElement("div");
+  el.className = "popover";
+  el.setAttribute("role", "dialog");
+  el.setAttribute("aria-modal", "false");
+  el.hidden = true;
+  el.innerHTML = `
+    <div class="title"></div>
+    <div class="content"></div>
+  `;
+  document.body.appendChild(el);
+  document.addEventListener("click", (e) => {
+    if (!el.hidden && !el.contains(e.target)) {
+      hideHelpPopover();
+    }
+  });
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") hideHelpPopover();
+  });
+  helpPopoverEl = el;
+  return el;
+}
+function showHelpPopover(anchorEl, title, text) {
+  const el = ensureHelpPopover();
+  el.querySelector(".title").textContent = title;
+  el.querySelector(".content").textContent = text;
+  el.hidden = false;
+  // Positionnement
+  const rect = anchorEl.getBoundingClientRect();
+  const margin = 8;
+  const vw = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
+  const vh = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
+  // Position par défaut à droite
+  let left = rect.right + margin + window.scrollX;
+  let top = rect.top + window.scrollY;
+  // Ajustements si dépasse l'écran
+  const elWidth = Math.min(320, vw * 0.8);
+  el.style.width = elWidth + "px";
+  if (left + elWidth > window.scrollX + vw) {
+    left = rect.left - elWidth - margin + window.scrollX;
+  }
+  const estimatedHeight = el.offsetHeight || 160;
+  if (top + estimatedHeight > window.scrollY + vh) {
+    top = window.scrollY + vh - estimatedHeight - margin;
+  }
+  el.style.left = `${left}px`;
+  el.style.top = `${top}px`;
+}
+function hideHelpPopover() {
+  if (helpPopoverEl) helpPopoverEl.hidden = true;
+}
+async function loadCriterionHelp(id) {
+  try {
+    const res = await fetch(`./descriptions/${id}.txt`, { cache: "no-store" });
+    if (!res.ok) throw new Error("not ok");
+    const txt = await res.text();
+    return txt.trim();
+  } catch {
+    return "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere, est in cursus aliquet, justo arcu pulvinar velit, vitae fermentum risus elit sit amet lectus.";
+  }
+}
+
 // Construire la liste UI
 function renderCriteriaList() {
   listEl.innerHTML = "";
@@ -132,7 +206,17 @@ function renderCriteriaList() {
     const name = document.createElement("div");
     name.className = "name";
     name.textContent = crit.name;
-    labelWrap.append(enabled, name);
+    const helpBtn = document.createElement("button");
+    helpBtn.type = "button";
+    helpBtn.className = "help";
+    helpBtn.setAttribute("aria-label", `Aide pour ${crit.name}`);
+    helpBtn.textContent = "?";
+    helpBtn.addEventListener("click", async (evt) => {
+      evt.stopPropagation();
+      const txt = await loadCriterionHelp(crit.id);
+      showHelpPopover(helpBtn, crit.name, txt);
+    });
+    labelWrap.append(enabled, name, helpBtn);
 
     const controls = document.createElement("div");
     controls.className = "controls";
@@ -193,7 +277,7 @@ function renderRadar(percents) {
   const config = {
     type: "radar",
     data: {
-      labels: TECHNIQUES,
+      labels: TECHNIQUES.map(t => TECHNIQUE_LABELS[t] ?? t),
       datasets: [{
         label: "Proximité (%)",
         data,
@@ -253,7 +337,8 @@ function renderRanking(totals, percents) {
   rankingList.innerHTML = "";
   for (const { t, total, pct } of items) {
     const li = document.createElement("li");
-    li.innerHTML = `<strong>${t}</strong> <span class="score">— ${total.toFixed(2)} pts (${pct.toFixed(1)}%)</span>`;
+    const label = TECHNIQUE_LABELS[t] ?? t;
+    li.innerHTML = `<strong>${label}</strong> <span class="score">— ${total.toFixed(2)} pts (${pct.toFixed(1)}%)</span>`;
     rankingList.appendChild(li);
   }
 }
