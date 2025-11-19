@@ -1,3 +1,3 @@
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Précisions requises (ex. < 1–2 mm) et implications méthodologiques.
-Aliquam erat volutpat. Integer a fermentum libero, ac dapibus mi.
+Précision visée (< 1–2 mm) : impacte le choix matériel, la méthodologie et les temps.
+SLS et LGS répondent bien aux exigences métriques ; PHO demande protocoles rigoureux et calibration soignée.
 

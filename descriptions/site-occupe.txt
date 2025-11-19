@@ -1,3 +1,3 @@
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Relevé rapide en site occupé et contraintes d’accès.
-Morbi at turpis eu justo dictum rhoncus. Donec at lorem id leo aliquet vehicula.
+Relevé rapide avec public, horaires contraints ou accès limités. Réduit les possibilités de trépieds et de répétitions.
+SLAM s’adapte bien aux parcours dynamiques ; LGS possible en stations brèves ; planifier pour minimiser les interruptions.
 

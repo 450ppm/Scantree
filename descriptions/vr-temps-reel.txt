@@ -1,3 +1,3 @@
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Visualisation immersive et temps réel (VR / web 3D).
-Mauris ac luctus mauris. Cras suscipit at mi at mollis.
+Visualisation immersive et diffusion temps réel (VR / web 3D). Vise fluidité et cohérence visuelle.
+GS est particulièrement adapté ; prévoir export vers moteur et optimisation (taille, performance, streaming).
 

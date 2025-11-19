@@ -1,3 +1,3 @@
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Délais et complexité de traitement.
-Etiam euismod justo non lorem fringilla, at sodales magna consequat.
+Temps de calcul et complexité pipeline : dépend du volume, de la qualité visée et des outils.
+SLAM produit vite des résultats “bons pour décider” ; LGS/PHO plus lourds mais stables ; GS demande GPU costaud.
 

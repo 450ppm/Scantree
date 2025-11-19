@@ -223,8 +223,8 @@ input[type="range"]::-webkit-slider-thumb {
 .popover {
   position: absolute;
   z-index: 1000;
-  background: linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,0));
-  border: 1px dashed rgba(255,255,255,.15);
+  background: rgba(20,22,26,.94);
+  border: 1px dashed rgba(255,255,255,.28);
   border-radius: 10px;
   padding: 12px 14px;
   box-shadow: var(--shadow);
