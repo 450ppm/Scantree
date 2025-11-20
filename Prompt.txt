@@ -1,3 +1,7 @@
+Je veux crééer une app didactique pour aider les acteurs du patrimoine à fair ele choix de la meilleure méthode de scan, je veux un système de slider pour faire les choix et un résultat sous forme de diagramme 
+à plusieurs sommet et que l'on se rapproche plsu de l'un ou de l'autre en focntion des résultat. Je veux publié cet outils sur le web, il doit être dynamique, elegant, une petite touche open source punk et responsive
+
+
 1. Rappel / positionnement des 5 “techniques”
 
 Pour clarifier le vocabulaire dans ton outil :
