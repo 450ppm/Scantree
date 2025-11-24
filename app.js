@@ -32,73 +32,38 @@ const CRITERIA = [
   {
     id: "grand-volume",
     name: "Bâtiment entier / grand volume",
-    scores: { LGS: 3, PHO: 2, SLAM: 3, SLS: 1, GS: "3*" },
+    scores: { LGS: 2, PHO: 3, SLAM: 3, SLS: 1, GS: "3*" },
     weight: 3, enabled: true
   },
   {
     id: "details-fins",
     name: "Détails fins / sculptures",
-    scores: { LGS: 3, PHO: 3, SLAM: 2, SLS: 3, GS: 2 },
+    scores: { LGS: 2, PHO: 3, SLAM: 2, SLS: 3, GS: 1 },
     weight: 3, enabled: true
   },
   {
     id: "precision",
     name: "Précision < 1–2 mm",
-    scores: { LGS: 3, PHO: 2, SLAM: "1–2", SLS: 3, GS: 2 },
+    scores: { LGS: 3, PHO: 2, SLAM: 1, SLS: 3, GS: 1 },
     weight: 3, enabled: true
   },
-  {
-    id: "site-occupe",
-    name: "Relevé rapide en site occupé",
-    scores: { LGS: 2, PHO: 2, SLAM: 3, SLS: 1, GS: 2 },
-    weight: 3, enabled: true
-  },
-  {
-    id: "espaces-etroits",
-    name: "Espaces étroits / circulations",
-    scores: { LGS: 2, PHO: 2, SLAM: 3, SLS: "1–2", GS: "3*" },
-    weight: 3, enabled: true
-  },
-  {
-    id: "mouvements",
-    name: "Mouvements (public, voitures)",
-    scores: { LGS: 3, PHO: 1, SLAM: 2, SLS: 1, GS: "1–2" },
-    weight: 3, enabled: true
-  },
+  
   {
     id: "materiaux-brillants",
     name: "Matériaux brillants / vitrés",
-    scores: { LGS: 3, PHO: 1, SLAM: 2, SLS: 2, GS: "1–2" },
+    scores: { LGS: 2, PHO: 1, SLAM: 2, SLS: 2, GS: 3 },
     weight: 3, enabled: true
   },
   {
     id: "textures-orthos",
     name: "Besoin textures / orthophotos",
-    scores: { LGS: 1, PHO: 3, SLAM: 2, SLS: 2, GS: 3 },
+    scores: { LGS: 1, PHO: 3, SLAM: 1, SLS: 1, GS: 1 },
     weight: 3, enabled: true
   },
   {
     id: "faible-lumiere",
     name: "Faible lumière / nuit",
-    scores: { LGS: 3, PHO: 1, SLAM: 2, SLS: "1–2", GS: "1–2" },
-    weight: 3, enabled: true
-  },
-  {
-    id: "vr-temps-reel",
-    name: "Visualisation temps réel immersive",
-    scores: { LGS: 2, PHO: 2, SLAM: 2, SLS: 1, GS: 3 },
-    weight: 3, enabled: true
-  },
-  {
-    id: "temps-traitement",
-    name: "Temps de traitement raisonnable",
-    scores: { LGS: 2, PHO: 1, SLAM: 2, SLS: 2, GS: "1–2" },
-    weight: 3, enabled: true
-  },
-  {
-    id: "mobilite",
-    name: "Matériel léger / mobilité",
-    scores: { LGS: 1, PHO: 3, SLAM: 3, SLS: "1–2", GS: "3**" },
+    scores: { LGS: 3, PHO: 1, SLAM: 2, SLS: 3, GS: 1 },
     weight: 3, enabled: true
   },
 ].map(c => ({
