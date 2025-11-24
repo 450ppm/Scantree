@@ -32,7 +32,7 @@ const CRITERIA = [
   {
     id: "grand-volume",
     name: "Bâtiment entier / grand volume",
-    scores: { LGS: 2, PHO: 3, SLAM: 3, SLS: 0, GS: "3*" },
+    scores: { LGS: 2, PHO: 3, SLAM: 3, SLS: 1, GS: "3*" },
     weight: 3, enabled: true
   },
   {
@@ -212,7 +212,6 @@ function renderCriteriaList() {
 // Calculs
 function computeTotals() {
   const totals = Object.fromEntries(TECHNIQUES.map(t => [t, 0]));
-  const vetoed = Object.fromEntries(TECHNIQUES.map(t => [t, false]));
   let maxPossible = 0;
   for (const crit of criteriaState) {
     if (!crit.enabled) continue;
@@ -220,17 +219,16 @@ function computeTotals() {
     maxPossible += w * MAX_PER_CRITERION;
     for (const t of TECHNIQUES) {
       const score = crit.scores[t] ?? 0;
-      if (score === 0) vetoed[t] = true; // veto: une note 0 annule la solution
       totals[t] += w * score;
     }
   }
   const percents = Object.fromEntries(
     TECHNIQUES.map(t => [
       t,
-      vetoed[t] ? 0 : (maxPossible > 0 ? (totals[t] / maxPossible) * 100 : 0)
+      maxPossible > 0 ? (totals[t] / maxPossible) * 100 : 0
     ])
   );
-  return { totals, percents, maxPossible, vetoed };
+  return { totals, percents, maxPossible };
 }
 
 // Chart.js radar (axes = techniques, dataset unique = “proximité”)
@@ -298,25 +296,23 @@ function renderRadar(percents) {
   }
 }
 
-function renderRanking(totals, percents, vetoed) {
+function renderRanking(totals, percents) {
   const items = TECHNIQUES
-    .map(t => ({ t, total: totals[t], pct: percents[t], veto: !!vetoed?.[t] }))
+    .map(t => ({ t, total: totals[t], pct: percents[t] }))
     .sort((a, b) => b.total - a.total);
   rankingList.innerHTML = "";
-  for (const { t, total, pct, veto } of items) {
+  for (const { t, total, pct } of items) {
     const li = document.createElement("li");
     const label = TECHNIQUE_LABELS[t] ?? t;
-    li.classList.toggle("veto", veto);
-    const note = veto ? " — exclu (note 0 sur un critère)" : ` — ${total.toFixed(2)} pts (${pct.toFixed(1)}%)`;
-    li.innerHTML = `<strong>${label}</strong> <span class="score">${note}</span>`;
+    li.innerHTML = `<strong>${label}</strong> <span class="score">— ${total.toFixed(2)} pts (${pct.toFixed(1)}%)</span>`;
     rankingList.appendChild(li);
   }
 }
 
 function updateAll() {
-  const { totals, percents, vetoed } = computeTotals();
+  const { totals, percents } = computeTotals();
   renderRadar(percents);
-  renderRanking(totals, percents, vetoed);
+  renderRanking(totals, percents);
 }
 
 // Presets (pondérations)
