@@ -185,6 +185,7 @@ input[type="range"]::-webkit-slider-thumb {
   color: var(--muted);
   font-size: 13px;
 }
+.ranking li.veto .score { color: var(--danger); }
 .notes details summary { cursor: pointer; color: var(--muted); }
 .notes ul { margin: 6px 0 0 18px; color: var(--muted); }
 
